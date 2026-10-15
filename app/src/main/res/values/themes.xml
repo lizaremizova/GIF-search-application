@@ -1,0 +1,4 @@
+<resources>
+    <!-- Window theme only; the UI itself is themed by GifSearchTheme in Compose. -->
+    <style name="Theme.GifSearch" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
