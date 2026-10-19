@@ -40,4 +40,22 @@ Dependencies point inward: features → domain ← data. Features don't know abo
 
 ## Status
 
-<!-- Fill in as you go: what's done, what isn't, and what you tried. -->
+All primary requirements are implemented:
+
+- Auto search with a 400 ms debounce (trimmed, duplicate and blank queries skipped)
+- Paging 3 pagination, stopping at the end of results and at Giphy's 4999 offset limit
+- Animated GIFs in an adaptive grid (more columns in landscape), details screen on tap
+- Loading indicators for the first load, query changes and next pages
+- Error states with Retry; offline banner and automatic retry when the connection returns
+- Light and dark theme (dynamic color on Android 12+)
+- `@Preview` (light + dark) for both screens
+- Unit tests: `GifPagingSource` (paging, end of list, offset cap, errors) and `SearchViewModel` (debounce)
+
+Bonus: Clean Architecture layers, multi-module, offline indication, minified release build (`./gradlew assembleRelease`).
+
+Run tests with `./gradlew testDebugUnitTest`.
+
+### Known limitations
+
+- Grid items have no stable keys: Giphy can return the same GIF on two pages, and duplicate keys crash a lazy grid.
+- "Nothing found" may flash for ~400 ms while the first query is debounced.
