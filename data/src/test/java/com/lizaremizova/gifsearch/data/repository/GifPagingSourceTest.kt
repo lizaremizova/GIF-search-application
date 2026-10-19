@@ -66,6 +66,19 @@ class GifPagingSourceTest {
     }
 
     @Test
+    fun `null query loads trending`() = runTest {
+        coEvery { api.trending(2, 0) } returns SearchResponseDto(
+            data = listOf(gif("t")),
+            pagination = PaginationDto(totalCount = 10),
+        )
+
+        val page = GifPagingSource(api, query = null)
+            .load(LoadParams.Refresh(key = null, loadSize = 2, placeholdersEnabled = false)) as LoadResult.Page
+
+        assertEquals(listOf("t"), page.data.map { it.id })
+    }
+
+    @Test
     fun `network failure becomes error result`() = runTest {
         coEvery { api.search(any(), any(), any()) } throws IOException("offline")
 

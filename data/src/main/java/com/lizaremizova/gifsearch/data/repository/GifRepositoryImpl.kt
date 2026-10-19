@@ -15,7 +15,11 @@ internal class GifRepositoryImpl @Inject constructor(
     private val api: GiphyApi,
 ) : GifRepository {
 
-    override fun search(query: String): Flow<PagingData<Gif>> =
+    override fun search(query: String): Flow<PagingData<Gif>> = pager(query)
+
+    override fun trending(): Flow<PagingData<Gif>> = pager(query = null)
+
+    private fun pager(query: String?): Flow<PagingData<Gif>> =
         Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,

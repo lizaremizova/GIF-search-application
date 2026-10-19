@@ -49,7 +49,15 @@ All primary requirements are implemented:
 - Error states with Retry; offline banner and automatic retry when the connection returns
 - Light and dark theme (dynamic color on Android 12+)
 - `@Preview` (light + dark) for both screens
-- Unit tests: `GifPagingSource` (paging, end of list, offset cap, errors) and `SearchViewModel` (debounce)
+- Unit tests: `GifPagingSource` (paging, trending, end of list, offset cap, errors) and `SearchViewModel` (debounce, trending)
+
+Extras:
+
+- Minimal monochrome design, staggered grid that keeps each GIF's proportions
+- Theme picker (System / Light / Dark), remembered between launches
+- Trending GIFs when the search field is empty
+- Clear-search button; keyboard hides when scrolling
+- Share a GIF link from the details screen
 
 Bonus: Clean Architecture layers, multi-module, offline indication, minified release build (`./gradlew assembleRelease`).
 
@@ -58,4 +66,3 @@ Run tests with `./gradlew testDebugUnitTest`.
 ### Known limitations
 
 - Grid items have no stable keys: Giphy can return the same GIF on two pages, and duplicate keys crash a lazy grid.
-- "Nothing found" may flash for ~400 ms while the first query is debounced.

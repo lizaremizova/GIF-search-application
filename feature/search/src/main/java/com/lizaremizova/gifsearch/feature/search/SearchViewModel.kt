@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -37,7 +36,7 @@ class SearchViewModel @Inject constructor(
         .debounce(DEBOUNCE_MS)
         .map { it.trim() }
         .distinctUntilChanged()
-        .flatMapLatest { q -> if (q.isEmpty()) flowOf(PagingData.empty()) else repository.search(q) }
+        .flatMapLatest { q -> if (q.isEmpty()) repository.trending() else repository.search(q) }
         .cachedIn(viewModelScope)
 
     val isOnline: StateFlow<Boolean> = connectivityObserver.isOnline

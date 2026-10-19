@@ -7,16 +7,23 @@ import com.lizaremizova.gifsearch.data.remote.toDomain
 import com.lizaremizova.gifsearch.domain.model.Gif
 import kotlin.coroutines.cancellation.CancellationException
 
-/** Giphy paginates by offset, so the paging key is the offset of the first item in a page. */
+/**
+ * Giphy paginates by offset, so the paging key is the offset of the first item in a page.
+ * A null [query] loads trending GIFs.
+ */
 internal class GifPagingSource(
     private val api: GiphyApi,
-    private val query: String,
+    private val query: String?,
 ) : PagingSource<Int, Gif>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Gif> {
         val offset = params.key ?: 0
         return try {
-            val response = api.search(query, params.loadSize, offset)
+            val response = if (query == null) {
+                api.trending(params.loadSize, offset)
+            } else {
+                api.search(query, params.loadSize, offset)
+            }
             val nextOffset = offset + response.data.size
             // Giphy rejects offsets above 4999, even when total_count is larger.
             val total = minOf(response.pagination?.totalCount ?: 0, MAX_OFFSET + 1)

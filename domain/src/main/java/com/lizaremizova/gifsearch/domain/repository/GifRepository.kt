@@ -8,5 +8,7 @@ interface GifRepository {
 
     fun search(query: String): Flow<PagingData<Gif>>
 
+    fun trending(): Flow<PagingData<Gif>>
+
     suspend fun getGif(id: String): Result<Gif>
 }

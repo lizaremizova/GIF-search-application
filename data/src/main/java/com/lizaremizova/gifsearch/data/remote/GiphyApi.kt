@@ -17,6 +17,13 @@ interface GiphyApi {
         @Query("rating") rating: String = "g",
     ): SearchResponseDto
 
+    @GET("gifs/trending")
+    suspend fun trending(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+        @Query("rating") rating: String = "g",
+    ): SearchResponseDto
+
     @GET("gifs/{id}")
     suspend fun getGif(@Path("id") id: String): GifResponseDto
 }

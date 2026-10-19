@@ -26,6 +26,7 @@ class SearchViewModelTest {
 
     private val repository = mockk<GifRepository> {
         every { search(any()) } returns flowOf(PagingData.empty())
+        every { trending() } returns flowOf(PagingData.empty())
     }
     private val connectivity = mockk<ConnectivityObserver> {
         every { isOnline } returns flowOf(true)
@@ -56,7 +57,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `blank query does not hit the api`() = runTest {
+    fun `blank query shows trending instead of searching`() = runTest {
         val viewModel = SearchViewModel(SavedStateHandle(), repository, connectivity)
         backgroundScope.launch { viewModel.gifs.collect {} }
 
@@ -64,6 +65,7 @@ class SearchViewModelTest {
         advanceTimeBy(SearchViewModel.DEBOUNCE_MS + 1)
         runCurrent()
 
+        verify(exactly = 1) { repository.trending() }
         verify(exactly = 0) { repository.search(any()) }
     }
 }
