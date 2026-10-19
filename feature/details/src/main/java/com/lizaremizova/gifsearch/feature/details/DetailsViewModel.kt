@@ -2,13 +2,16 @@ package com.lizaremizova.gifsearch.feature.details
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.lizaremizova.gifsearch.core.ui.components.toUserMessage
 import com.lizaremizova.gifsearch.domain.model.Gif
 import com.lizaremizova.gifsearch.domain.repository.GifRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface DetailsUiState {
@@ -33,7 +36,12 @@ class DetailsViewModel @Inject constructor(
     }
 
     fun load() {
-        // TODO: set Loading, then in viewModelScope.launch call repository.getGif(gifId)
-        //  and map the Result to Success / Error.
+        _uiState.value = DetailsUiState.Loading
+        viewModelScope.launch {
+            _uiState.value = repository.getGif(gifId).fold(
+                onSuccess = { DetailsUiState.Success(it) },
+                onFailure = { DetailsUiState.Error(it.toUserMessage()) },
+            )
+        }
     }
 }

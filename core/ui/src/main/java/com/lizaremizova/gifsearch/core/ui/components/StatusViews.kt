@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lizaremizova.gifsearch.core.ui.theme.GifSearchTheme
+import java.io.IOException
 
 @Composable
 fun FullScreenLoading(modifier: Modifier = Modifier) {
@@ -46,6 +47,11 @@ fun ErrorView(
             Button(onClick = onRetry) { Text("Retry") }
         }
     }
+}
+
+fun Throwable.toUserMessage(): String = when (this) {
+    is IOException -> "No internet connection"
+    else -> "Something went wrong: ${message ?: javaClass.simpleName}"
 }
 
 @Preview(showBackground = true)

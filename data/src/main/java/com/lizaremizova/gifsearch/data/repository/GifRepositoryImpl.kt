@@ -4,10 +4,12 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.lizaremizova.gifsearch.data.remote.GiphyApi
+import com.lizaremizova.gifsearch.data.remote.toDomain
 import com.lizaremizova.gifsearch.domain.model.Gif
 import com.lizaremizova.gifsearch.domain.repository.GifRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 internal class GifRepositoryImpl @Inject constructor(
     private val api: GiphyApi,
@@ -23,9 +25,14 @@ internal class GifRepositoryImpl @Inject constructor(
             pagingSourceFactory = { GifPagingSource(api, query) },
         ).flow
 
-    override suspend fun getGif(id: String): Result<Gif> {
-        // TODO: call api.getGif(id), map with toDomain(), return failure on errors / null mapping.
-        TODO("Implement")
+    override suspend fun getGif(id: String): Result<Gif> = try {
+        api.getGif(id).data.toDomain()
+            ?.let { Result.success(it) }
+            ?: Result.failure(NoSuchElementException("GIF has no images"))
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
     private companion object {
